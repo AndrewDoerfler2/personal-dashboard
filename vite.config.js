@@ -1,0 +1,10 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+// base './' makes asset paths relative, so the built site works at a
+// project-pages URL (/personal-dashboard/) and at the root of a custom domain.
+export default defineConfig({
+  base: './',
+  plugins: [react()],
+  server: { port: 5173, host: true },
+});
