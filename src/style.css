@@ -444,3 +444,10 @@ a { color: var(--accent); }
   .habit-row { grid-template-columns: minmax(70px, 1fr) repeat(7, 26px) 24px; gap: 3px; }
   .habit-row button.check { width: 26px; height: 26px; }
 }
+
+/* ---- Two-column layout: weather + calendar left, to-dos and smaller cards right ---- */
+.layout { display: flex; flex-direction: column; gap: 16px; }
+.col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+@media (min-width: 900px) {
+  .layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: start; }
+}

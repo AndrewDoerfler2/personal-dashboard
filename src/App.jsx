@@ -1,4 +1,5 @@
-// Dashboard layout. Calendar and to-dos share state here so the summary cards stay in sync.
+// Dashboard layout. Weather and the calendar sit on the left; to-dos and the smaller cards
+// stack on the right. Calendar and to-do state lives here so the summary cards stay in sync.
 import Bookmarks from './components/Bookmarks.jsx';
 import Calendar from './components/Calendar.jsx';
 import Countdowns from './components/Countdowns.jsx';
@@ -48,43 +49,45 @@ export default function App() {
       </header>
       <p className="quote">“{quoteForDay(now)}”</p>
 
-      <div className="grid main">
-        <section className="card weather-card" aria-label="Weather">
-          <Weather />
-        </section>
-        <section className="card calendar-card" aria-label="Calendar">
-          <Calendar events={events} setEvents={setEvents} />
-        </section>
-        <section className="card todo-card" aria-label="To do">
-          <Todos todos={todos} setTodos={setTodos} today={today} />
-        </section>
-      </div>
+      <div className="layout">
+        <div className="col col-main">
+          <section className="card" aria-label="Weather">
+            <Weather />
+          </section>
+          <section className="card" aria-label="Calendar">
+            <Calendar events={events} setEvents={setEvents} />
+          </section>
+        </div>
 
-      <div className="grid secondary">
-        <section className="card" aria-label="Next 7 days">
-          <Upcoming events={events} todos={todos} today={today} />
-        </section>
-        <section className="card" aria-label="Countdowns">
-          <Countdowns today={today} />
-        </section>
-        <section className="card span-2" aria-label="Habits">
-          <Habits today={today} />
-        </section>
-        <section className="card" aria-label="Quick notes">
-          <Notes />
-        </section>
-        <section className="card" aria-label="Bookmarks">
-          <Bookmarks />
-        </section>
-        <section className="card" aria-label="Learning">
-          <Learning />
-        </section>
-        <section className="card" aria-label="Routines">
-          <Routines />
-        </section>
-        <section className="card" aria-label="Completed this week">
-          <Stats todos={todos} today={today} />
-        </section>
+        <div className="col col-side">
+          <section className="card" aria-label="To do">
+            <Todos todos={todos} setTodos={setTodos} today={today} />
+          </section>
+          <section className="card" aria-label="Next 7 days">
+            <Upcoming events={events} todos={todos} today={today} />
+          </section>
+          <section className="card" aria-label="Countdowns">
+            <Countdowns today={today} />
+          </section>
+          <section className="card" aria-label="Habits">
+            <Habits today={today} />
+          </section>
+          <section className="card" aria-label="Quick notes">
+            <Notes />
+          </section>
+          <section className="card" aria-label="Bookmarks">
+            <Bookmarks />
+          </section>
+          <section className="card" aria-label="Learning">
+            <Learning />
+          </section>
+          <section className="card" aria-label="Routines">
+            <Routines />
+          </section>
+          <section className="card" aria-label="Completed this week">
+            <Stats todos={todos} today={today} />
+          </section>
+        </div>
       </div>
     </div>
   );
