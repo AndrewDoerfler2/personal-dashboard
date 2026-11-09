@@ -27,10 +27,6 @@ export default function Habits({ today }) {
 
   return (
     <>
-      <div className="card-head">
-        <h2>Habits</h2>
-        <span className="muted small">last 7 days</span>
-      </div>
 
       {habits.length === 0 && <p className="muted">Track something you want to do every day.</p>}
 

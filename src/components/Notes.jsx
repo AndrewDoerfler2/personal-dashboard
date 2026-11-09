@@ -26,9 +26,6 @@ export default function Notes() {
 
   return (
     <>
-      <div className="card-head">
-        <h2>Quick notes</h2>
-      </div>
 
       <form className="row" onSubmit={add}>
         <input value={text} onChange={(e) => setText(e.target.value)} placeholder="Jot something down" aria-label="New note" />

@@ -11,10 +11,6 @@ export default function Stats({ todos, today }) {
 
   return (
     <>
-      <div className="card-head">
-        <h2>Completed this week</h2>
-        <span className="muted small">{total} total</span>
-      </div>
       <div className="bars" role="img" aria-label={`${total} tasks completed in the last 7 days`}>
         {days.map((key, i) => (
           <div key={key} className="bar-col">

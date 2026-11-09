@@ -21,10 +21,6 @@ export default function Learning() {
 
   return (
     <>
-      <div className="card-head">
-        <h2>Learning</h2>
-        <span className="muted small">{unread} unread</span>
-      </div>
 
       {error && <p className="error small">{error}</p>}
       {entries.length === 0 && !error && <p className="muted">No entries yet. Scheduled routines will add them here.</p>}

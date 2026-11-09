@@ -22,9 +22,6 @@ export default function Routines() {
 
   return (
     <>
-      <div className="card-head">
-        <h2>Routines</h2>
-      </div>
 
       {error && <p className="error small">{error}</p>}
       {routines.length === 0 && !error && <p className="muted">No routines reporting yet.</p>}

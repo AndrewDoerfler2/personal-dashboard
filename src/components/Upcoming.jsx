@@ -20,9 +20,6 @@ export default function Upcoming({ events, todos, today }) {
 
   return (
     <>
-      <div className="card-head">
-        <h2>Next 7 days</h2>
-      </div>
 
       {overdue.length > 0 && (
         <div className="alert">

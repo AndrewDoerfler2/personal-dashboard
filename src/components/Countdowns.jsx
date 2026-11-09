@@ -29,9 +29,6 @@ export default function Countdowns({ today }) {
 
   return (
     <>
-      <div className="card-head">
-        <h2>Countdowns</h2>
-      </div>
 
       {sorted.length === 0 && <p className="muted">Add a date you're counting toward.</p>}
       <ul className="countdown-list">

@@ -12,6 +12,7 @@ by `.github/workflows/deploy.yml`. See README.md for the file map.
 - Colors are CSS variables on `:root` with dark-mode overrides in `src/style.css`. Keep them there.
 - Weather uses Open-Meteo (no key). Keep requests in `Weather.jsx`.
 - Calendar and to-do state lives in `App.jsx` and is passed down; other cards keep their own state.
+- Smaller cards in the right column are wrapped in `<Collapsible title=...>` (closed by default). Components render only their body, not a header.
 
 ## Routine output
 

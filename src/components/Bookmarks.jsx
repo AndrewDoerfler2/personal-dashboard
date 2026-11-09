@@ -34,9 +34,6 @@ export default function Bookmarks() {
 
   return (
     <>
-      <div className="card-head">
-        <h2>Bookmarks</h2>
-      </div>
 
       {bookmarks.length === 0 && <p className="muted">Save the sites you open every day.</p>}
       <ul className="bookmark-list">

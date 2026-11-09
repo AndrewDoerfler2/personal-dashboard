@@ -451,3 +451,29 @@ a { color: var(--accent); }
 @media (min-width: 900px) {
   .layout { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: start; }
 }
+
+/* ---- Collapsible cards ---- */
+.collapsible { padding: 0; }
+.collapsible details { width: 100%; }
+.collapsible summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+}
+.collapsible summary::-webkit-details-marker { display: none; }
+.collapsible summary::before {
+  content: '▸';
+  color: var(--muted);
+  transition: transform 0.15s ease;
+  display: inline-block;
+  width: 1em;
+}
+.collapsible details[open] > summary::before { transform: rotate(90deg); }
+.collapsible summary:hover h2 { color: var(--accent); }
+.collapsible summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.collapsible summary h2 { margin: 0; }
+.collapsible-body { padding: 0 16px 16px; }

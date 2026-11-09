@@ -1,7 +1,8 @@
-// Dashboard layout. Weather and the calendar sit on the left; to-dos and the smaller cards
-// stack on the right. Calendar and to-do state lives here so the summary cards stay in sync.
+// Dashboard layout. Weather, the calendar and to-dos stay open; the smaller cards fold away.
+// Calendar and to-do state lives here so the summary cards stay in sync.
 import Bookmarks from './components/Bookmarks.jsx';
 import Calendar from './components/Calendar.jsx';
+import Collapsible from './components/Collapsible.jsx';
 import Countdowns from './components/Countdowns.jsx';
 import Habits from './components/Habits.jsx';
 import Learning from './components/Learning.jsx';
@@ -63,30 +64,30 @@ export default function App() {
           <section className="card" aria-label="To do">
             <Todos todos={todos} setTodos={setTodos} today={today} />
           </section>
-          <section className="card" aria-label="Next 7 days">
+          <Collapsible title="Next 7 days">
             <Upcoming events={events} todos={todos} today={today} />
-          </section>
-          <section className="card" aria-label="Countdowns">
+          </Collapsible>
+          <Collapsible title="Countdowns">
             <Countdowns today={today} />
-          </section>
-          <section className="card" aria-label="Habits">
+          </Collapsible>
+          <Collapsible title="Habits">
             <Habits today={today} />
-          </section>
-          <section className="card" aria-label="Quick notes">
+          </Collapsible>
+          <Collapsible title="Quick notes">
             <Notes />
-          </section>
-          <section className="card" aria-label="Bookmarks">
+          </Collapsible>
+          <Collapsible title="Bookmarks">
             <Bookmarks />
-          </section>
-          <section className="card" aria-label="Learning">
+          </Collapsible>
+          <Collapsible title="Learning">
             <Learning />
-          </section>
-          <section className="card" aria-label="Routines">
+          </Collapsible>
+          <Collapsible title="Routines">
             <Routines />
-          </section>
-          <section className="card" aria-label="Completed this week">
+          </Collapsible>
+          <Collapsible title="Completed this week">
             <Stats todos={todos} today={today} />
-          </section>
+          </Collapsible>
         </div>
       </div>
     </div>
