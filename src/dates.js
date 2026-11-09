@@ -11,6 +11,17 @@ export function parseKey(key) {
   return new Date(y, m - 1, d);
 }
 
+export function addDays(key, n) {
+  const d = parseKey(key);
+  d.setDate(d.getDate() + n);
+  return toKey(d);
+}
+
+// Whole calendar days from one key to another (DST-safe).
+export function daysBetween(from, to) {
+  return Math.round((parseKey(to) - parseKey(from)) / 86_400_000);
+}
+
 // 6 weeks (42 days) starting on the Sunday on or before the 1st of the month.
 export function monthGrid(year, month) {
   const first = new Date(year, month, 1);

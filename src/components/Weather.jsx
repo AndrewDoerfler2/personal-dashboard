@@ -39,6 +39,32 @@ const CODES = {
 
 const describe = (code) => CODES[code] ?? ['🌡️', 'Unknown'];
 
+// Open-Meteo returns local times as "2026-11-08T06:43"; format them without converting zones.
+function clock(iso) {
+  if (!iso) return '';
+  const [h, m] = iso.slice(11, 16).split(':').map(Number);
+  return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
+}
+
+// Warnings for the next 24 hours, based on the hourly forecast.
+function alertsFor(forecast) {
+  const { current, hourly } = forecast;
+  const start = Math.max(0, hourly.time.indexOf(current.time));
+  const precip = hourly.precipitation_probability.slice(start, start + 24);
+  const temps = hourly.temperature_2m.slice(start, start + 24);
+  const alerts = [];
+  if (precip.length && Math.max(...precip) >= 60) {
+    alerts.push(`Rain likely in the next 24 hours (up to ${Math.max(...precip)}%).`);
+  }
+  if (temps.length && Math.min(...temps) <= 32) {
+    alerts.push(`Freezing temperatures expected (low ${Math.round(Math.min(...temps))}°F).`);
+  }
+  if (temps.length && Math.max(...temps) >= 95) {
+    alerts.push(`Very hot (high ${Math.round(Math.max(...temps))}°F).`);
+  }
+  return alerts;
+}
+
 export default function Weather() {
   const [place, setPlace] = usePersistentState('weatherPlace', DEFAULT_PLACE);
   const [forecast, setForecast] = useState(null);
@@ -53,7 +79,8 @@ export default function Weather() {
       latitude: place.lat,
       longitude: place.lon,
       current: 'temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m',
-      daily: 'weather_code,temperature_2m_max,temperature_2m_min',
+      hourly: 'precipitation_probability,temperature_2m',
+      daily: 'weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset',
       temperature_unit: 'fahrenheit',
       wind_speed_unit: 'mph',
       timezone: 'auto',
@@ -119,6 +146,7 @@ export default function Weather() {
 
   const current = forecast?.current;
   const [icon, label] = describe(current?.weather_code);
+  const alerts = forecast && current ? alertsFor(forecast) : [];
 
   return (
     <>
@@ -129,6 +157,14 @@ export default function Weather() {
 
       {status === 'loading' && !forecast && <p className="muted">Loading forecast…</p>}
       {status === 'error' && <p className="error">Couldn’t load the forecast. Try again later.</p>}
+
+      {alerts.length > 0 && (
+        <div className="alert" role="status">
+          {alerts.map((a) => (
+            <div key={a}>⚠️ {a}</div>
+          ))}
+        </div>
+      )}
 
       {forecast && current && (
         <div className="weather-body">
@@ -141,6 +177,9 @@ export default function Weather() {
               </div>
               <div className="muted small">
                 Humidity {current.relative_humidity_2m}% · Wind {Math.round(current.wind_speed_10m)} mph
+              </div>
+              <div className="muted small">
+                ☀︎ Sunrise {clock(forecast.daily.sunrise[0])} · Sunset {clock(forecast.daily.sunset[0])}
               </div>
             </div>
           </div>
@@ -164,12 +203,7 @@ export default function Weather() {
       )}
 
       <form className="row place-form" onSubmit={findPlace}>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Change city…"
-          aria-label="Change city"
-        />
+        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Change city…" aria-label="Change city" />
         <button type="submit">Set</button>
         <button type="button" onClick={useMyLocation}>
           Use my location

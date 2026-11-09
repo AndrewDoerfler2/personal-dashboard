@@ -1,29 +1,19 @@
 import { useMemo, useState } from 'react';
-import { usePersistentState } from '../hooks.js';
 import { monthGrid, newId, parseKey, toKey } from '../dates.js';
+import { eventsOn, REPEAT_OPTIONS, repeatLabel } from '../recurrence.js';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const emptyDraft = { id: null, title: '', time: '', notes: '' };
+const emptyDraft = { id: null, title: '', time: '', notes: '', repeat: 'none' };
 
-export default function Calendar() {
+export default function Calendar({ events, setEvents }) {
   const today = new Date();
   const todayKey = toKey(today);
   const [view, setView] = useState({ year: today.getFullYear(), month: today.getMonth() });
   const [selected, setSelected] = useState(todayKey);
-  const [events, setEvents] = usePersistentState('events', []);
   const [draft, setDraft] = useState(emptyDraft);
 
   const cells = useMemo(() => monthGrid(view.year, view.month), [view]);
-
-  const countByDay = useMemo(() => {
-    const counts = {};
-    for (const e of events) counts[e.date] = (counts[e.date] || 0) + 1;
-    return counts;
-  }, [events]);
-
-  const dayEvents = events
-    .filter((e) => e.date === selected)
-    .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+  const dayEvents = eventsOn(events, selected);
 
   const shiftMonth = (delta) =>
     setView((v) => {
@@ -40,7 +30,12 @@ export default function Calendar() {
     e.preventDefault();
     const title = draft.title.trim();
     if (!title) return;
-    const fields = { title, time: draft.time, notes: draft.notes.trim() };
+    const fields = {
+      title,
+      time: draft.time,
+      notes: draft.notes.trim(),
+      repeat: draft.repeat,
+    };
     if (draft.id) {
       setEvents((prev) => prev.map((ev) => (ev.id === draft.id ? { ...ev, ...fields } : ev)));
     } else {
@@ -49,7 +44,14 @@ export default function Calendar() {
     setDraft(emptyDraft);
   };
 
-  const edit = (ev) => setDraft({ id: ev.id, title: ev.title, time: ev.time || '', notes: ev.notes || '' });
+  const edit = (ev) =>
+    setDraft({
+      id: ev.id,
+      title: ev.title,
+      time: ev.time || '',
+      notes: ev.notes || '',
+      repeat: ev.repeat || 'none',
+    });
 
   const remove = (id) => {
     setEvents((prev) => prev.filter((ev) => ev.id !== id));
@@ -91,6 +93,7 @@ export default function Calendar() {
         {cells.map((date) => {
           const key = toKey(date);
           const inMonth = date.getMonth() === view.month;
+          const count = eventsOn(events, key).length;
           const classes = [
             'day',
             inMonth ? '' : 'outside',
@@ -99,7 +102,6 @@ export default function Calendar() {
           ]
             .filter(Boolean)
             .join(' ');
-          const count = countByDay[key] || 0;
           return (
             <button
               key={key}
@@ -125,10 +127,11 @@ export default function Calendar() {
         {dayEvents.length === 0 && <p className="muted">No events.</p>}
         <ul className="event-list">
           {dayEvents.map((ev) => (
-            <li key={ev.id}>
+            <li key={`${ev.id}-${selected}`}>
               <div>
                 <strong>{ev.title}</strong>
                 {ev.time && <span className="muted"> · {ev.time}</span>}
+                {repeatLabel(ev.repeat) && <span className="tag">{repeatLabel(ev.repeat)}</span>}
                 {ev.notes && <p className="muted small">{ev.notes}</p>}
               </div>
               <div className="btn-group">
@@ -156,13 +159,24 @@ export default function Calendar() {
               onChange={(e) => setDraft({ ...draft, time: e.target.value })}
               aria-label="Time"
             />
-            <input
-              value={draft.notes}
-              onChange={(e) => setDraft({ ...draft, notes: e.target.value })}
-              placeholder="Notes (optional)"
-              aria-label="Notes"
-            />
+            <select
+              value={draft.repeat}
+              onChange={(e) => setDraft({ ...draft, repeat: e.target.value })}
+              aria-label="Repeat"
+            >
+              {REPEAT_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
           </div>
+          <input
+            value={draft.notes}
+            onChange={(e) => setDraft({ ...draft, notes: e.target.value })}
+            placeholder="Notes (optional)"
+            aria-label="Notes"
+          />
           <div className="btn-group">
             <button type="submit">{editing ? 'Save changes' : 'Add event'}</button>
             {editing && (

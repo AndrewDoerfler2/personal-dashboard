@@ -11,12 +11,13 @@ by `.github/workflows/deploy.yml`. See README.md for the file map.
   `usePersistentState(key, fallback)` wraps it for components.
 - Colors are CSS variables on `:root` with dark-mode overrides in `src/style.css`. Keep them there.
 - Weather uses Open-Meteo (no key). Keep requests in `Weather.jsx`.
+- Calendar and to-do state lives in `App.jsx` and is passed down; other cards keep their own state.
 
-## Planned
+## Routine output
 
-- Scheduled Claude routines will write their output into the dashboard (e.g. a "learning" card).
-  That needs a data source outside the browser. Add it behind `storage.js` or a new `src/api.js`,
-  not inside the components.
+- Routines publish to `public/data/learning.json` and `public/data/routines.json` (format in README.md).
+  Committing those files to `main` redeploys the site. Components read them via `useJsonFile`.
+- Calendar sync with Google/Outlook is not built; it needs a backend for sign-in.
 
 ## Verifying changes
 

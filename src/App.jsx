@@ -1,8 +1,18 @@
-// Dashboard layout: weather across the top, calendar and to-do list below.
+// Dashboard layout. Calendar and to-dos share state here so the summary cards stay in sync.
+import Bookmarks from './components/Bookmarks.jsx';
 import Calendar from './components/Calendar.jsx';
+import Countdowns from './components/Countdowns.jsx';
+import Habits from './components/Habits.jsx';
+import Learning from './components/Learning.jsx';
+import Notes from './components/Notes.jsx';
+import Routines from './components/Routines.jsx';
+import Stats from './components/Stats.jsx';
 import Todos from './components/Todos.jsx';
+import Upcoming from './components/Upcoming.jsx';
 import Weather from './components/Weather.jsx';
-import { useNow } from './hooks.js';
+import { usePersistentState, useNow } from './hooks.js';
+import { quoteForDay } from './quotes.js';
+import { toKey } from './dates.js';
 
 function greeting(hour) {
   if (hour < 5) return 'Up late';
@@ -13,6 +23,10 @@ function greeting(hour) {
 
 export default function App() {
   const now = useNow();
+  const today = toKey(now);
+  const [events, setEvents] = usePersistentState('events', []);
+  const [todos, setTodos] = usePersistentState('todos', []);
+
   const dateLine = now.toLocaleDateString(undefined, {
     weekday: 'long',
     month: 'long',
@@ -32,16 +46,44 @@ export default function App() {
           {timeLine}
         </time>
       </header>
+      <p className="quote">“{quoteForDay(now)}”</p>
 
-      <div className="grid">
+      <div className="grid main">
         <section className="card weather-card" aria-label="Weather">
           <Weather />
         </section>
         <section className="card calendar-card" aria-label="Calendar">
-          <Calendar />
+          <Calendar events={events} setEvents={setEvents} />
         </section>
         <section className="card todo-card" aria-label="To do">
-          <Todos />
+          <Todos todos={todos} setTodos={setTodos} today={today} />
+        </section>
+      </div>
+
+      <div className="grid secondary">
+        <section className="card" aria-label="Next 7 days">
+          <Upcoming events={events} todos={todos} today={today} />
+        </section>
+        <section className="card" aria-label="Countdowns">
+          <Countdowns today={today} />
+        </section>
+        <section className="card span-2" aria-label="Habits">
+          <Habits today={today} />
+        </section>
+        <section className="card" aria-label="Quick notes">
+          <Notes />
+        </section>
+        <section className="card" aria-label="Bookmarks">
+          <Bookmarks />
+        </section>
+        <section className="card" aria-label="Learning">
+          <Learning />
+        </section>
+        <section className="card" aria-label="Routines">
+          <Routines />
+        </section>
+        <section className="card" aria-label="Completed this week">
+          <Stats todos={todos} today={today} />
         </section>
       </div>
     </div>
